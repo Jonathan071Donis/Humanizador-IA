@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self';">
+    <title>Humanizador de Texto Futurista</title>
+    <link rel="icon" type="image/png" href="img/favicon.ico.jpg">
+    <link rel="stylesheet" href="style.css">
+    <!-- Mammoth.js para .docx -->
+    <script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
+    <!-- PDF.js para .pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Humanizador de Texto</h1>
+            <p>Transforma tu texto en algo único y profesional.</p>
+        </header>
+        <main>
+            <div class="input-section">
+                <textarea id="textInput" placeholder="Ingresa tu texto aquí..."></textarea>
+                <input type="file" id="fileInput" accept=".txt,.docx,.pdf">
+                <button id="humanizeButton">Humanizar Texto</button>
+            </div>
+            <div class="output-section">
+                <div class="output-header">
+                    <h2>Texto Humanizado:</h2>
+                    <button id="copyButton">Copiar Texto</button>
+                </div>
+                <div class="output-box">
+                    <div id="outputText"></div>
+                </div>
+                <div class="human-verification">
+                    <span id="verificationText">Texto 100% realizado por humanos</span>
+                    <div class="verification-icon">✔️</div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2025 Humanizador de Texto. Todos los derechos reservados. Donis071-🥷</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

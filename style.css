@@ -1,0 +1,257 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #0d0d0d;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 255, 150, 0.3);
+    width: 90%;
+    max-width: 800px;
+    margin: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #00ff96;
+    margin: 0;
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px #00ff96, 0 0 20px #00ff96;
+    }
+    to {
+        text-shadow: 0 0 20px #00ff96, 0 0 40px #00ff96;
+    }
+}
+
+header p {
+    font-size: 1rem;
+    color: #cccccc;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #00ff96;
+    background-color: #262626;
+    color: #ffffff;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+textarea:focus {
+    border-color: #00cc77;
+    outline: none;
+}
+
+textarea::placeholder {
+    color: #888888;
+}
+
+input[type="file"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #00ff96;
+    background-color: #262626;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: #00cc77;
+}
+
+button {
+    padding: 10px;
+    background-color: #00ff96;
+    color: #0d0d0d;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #00cc77;
+}
+
+.output-section {
+    margin-top: 20px;
+}
+
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.output-header h2 {
+    font-size: 1.5rem;
+    color: #00ff96;
+    margin: 0;
+}
+
+#copyButton {
+    background-color: #262626;
+    color: #00ff96;
+    border: 2px solid #00ff96;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+#copyButton:hover {
+    background-color: #00ff96;
+    color: #0d0d0d;
+}
+
+.output-box {
+    background-color: #262626;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #00ff96;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ffffff;
+    white-space: pre-wrap; /* Mantener saltos de línea y espacios */
+}
+
+#outputText p {
+    margin: 0 0 15px 0; /* Espaciado entre párrafos */
+}
+
+.human-verification {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #262626;
+    border-radius: 8px;
+    border: 2px solid #00ff96;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.human-verification span {
+    font-size: 0.9rem;
+    color: #00ff96;
+}
+
+.verification-icon {
+    font-size: 1.2rem;
+    color: #00ff96;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #888888;
+}
+
+/* Diseño Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    header p {
+        font-size: 0.9rem;
+    }
+
+    textarea {
+        height: 120px;
+    }
+
+    .output-box {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    header p {
+        font-size: 0.8rem;
+    }
+
+    textarea {
+        height: 100px;
+    }
+
+    button {
+        font-size: 0.9rem;
+    }
+
+    .output-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .output-box {
+        max-height: 150px;
+    }
+}
