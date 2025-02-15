@@ -1,23 +1,17 @@
 function humanizeText() {
-    const textInput = document.getElementById('textInput').value;
+    const textInput = document.getElementById('textInput');
     const fileInput = document.getElementById('fileInput');
 
-    // Limpiar el contenido previo del output
     const outputDiv = document.getElementById('outputText');
     outputDiv.innerHTML = 'Cargando...'; // Mensaje temporal mientras se procesa
 
-    // Validar entrada de texto manual
-    if (textInput.trim() !== '') {
-        const sanitizedText = sanitizeInput(textInput); // Sanitizar el texto manual
-        processAndDisplayText(sanitizedText);
-        return;
-    }
+    // Limpiar el contenido previo
+    outputDiv.innerHTML = '';
 
-    // Si hay un archivo cargado, procesarlo
     if (fileInput.files.length > 0) {
+        // Si hay un archivo cargado, ignorar el texto manual
         const file = fileInput.files[0];
 
-        // Validar el tipo y tamaño del archivo
         if (!validateFile(file)) {
             alert("Formato de archivo no soportado o tamaño excesivo. Usa .txt, .docx o .pdf (máximo 5 MB).");
             outputDiv.innerHTML = '';
@@ -31,14 +25,13 @@ function humanizeText() {
 
             if (fileType === 'txt') {
                 const text = e.target.result;
-                const sanitizedText = sanitizeInput(text); // Sanitizar el texto del archivo
+                const sanitizedText = sanitizeInput(text);
                 processAndDisplayText(sanitizedText);
             } else if (fileType === 'docx') {
-                // Procesar archivo .docx con Mammoth.js
                 mammoth.extractRawText({ arrayBuffer: e.target.result })
                     .then(result => {
                         const text = result.value;
-                        const sanitizedText = sanitizeInput(text); // Sanitizar el texto
+                        const sanitizedText = sanitizeInput(text);
                         processAndDisplayText(sanitizedText);
                     })
                     .catch(error => {
@@ -47,13 +40,11 @@ function humanizeText() {
                         outputDiv.innerHTML = '';
                     });
             } else if (fileType === 'pdf') {
-                // Procesar archivo .pdf con PDF.js
                 const loadingTask = pdfjsLib.getDocument({ data: e.target.result });
                 loadingTask.promise.then(pdf => {
                     let pdfText = '';
                     const numPages = pdf.numPages;
 
-                    // Leer todas las páginas
                     const pagePromises = [];
                     for (let i = 1; i <= numPages; i++) {
                         pagePromises.push(
@@ -65,10 +56,9 @@ function humanizeText() {
                         );
                     }
 
-                    // Unir el texto de todas las páginas
                     Promise.all(pagePromises).then(pages => {
                         pdfText = pages.join('\n');
-                        const sanitizedText = sanitizeInput(pdfText); // Sanitizar el texto
+                        const sanitizedText = sanitizeInput(pdfText);
                         processAndDisplayText(sanitizedText);
                     });
                 }).catch(error => {
@@ -80,6 +70,10 @@ function humanizeText() {
         };
 
         reader.readAsArrayBuffer(file);
+    } else if (textInput.value.trim() !== '') {
+        // Si no hay archivo, usar el texto manual
+        const sanitizedText = sanitizeInput(textInput.value);
+        processAndDisplayText(sanitizedText);
     } else {
         alert("Por favor, ingresa texto manualmente o selecciona un archivo.");
         outputDiv.innerHTML = '';
@@ -87,33 +81,30 @@ function humanizeText() {
 }
 
 function processAndDisplayText(text) {
-    const humanizedText = processText(text); // Humanizar el texto
+    const humanizedText = processText(text);
     const outputDiv = document.getElementById('outputText');
 
     // Limpiar el contenido previo
     outputDiv.innerHTML = '';
 
-    // Dividir el texto en párrafos (basado en saltos de línea)
     const paragraphs = humanizedText.split('\n').filter(p => p.trim() !== '');
 
-    // Añadir cada párrafo como un elemento <p>
     paragraphs.forEach(paragraph => {
         const pElement = document.createElement('p');
-        pElement.textContent = paragraph; // InnerText para evitar XSS
-        pElement.style.marginBottom = '15px'; // Espaciado entre párrafos
-        pElement.style.lineHeight = '1.6'; // Espaciado entre líneas
+        pElement.textContent = paragraph;
+        pElement.style.marginBottom = '15px';
+        pElement.style.lineHeight = '1.6';
         outputDiv.appendChild(pElement);
     });
 }
 
 function sanitizeInput(input) {
-    // Eliminar etiquetas HTML y scripts maliciosos
     return input.replace(/<[^>]*>?/gm, '');
 }
 
 function validateFile(file) {
     const allowedTypes = ['txt', 'docx', 'pdf'];
-    const maxSize = 5 * 1024 * 1024; // 5 MB
+    const maxSize = 5 * 1024 * 1024;
 
     const fileType = file.name.split('.').pop().toLowerCase();
     if (!allowedTypes.includes(fileType)) {
@@ -128,53 +119,48 @@ function validateFile(file) {
 }
 
 function processText(text) {
-    // Paso 1: Reemplazar palabras comunes con sinónimos
     text = replaceWithSynonyms(text);
-
-    // Paso 2: Modificar la estructura de las oraciones
     text = rephraseSentences(text);
-
-    // Paso 3: Ajustar la puntuación para hacerla más humana
     text = adjustPunctuation(text);
-
-    // Paso 4: Añadir variabilidad en la longitud de las oraciones
     text = varySentenceLength(text);
-
-    // Paso 5: Insertar expresiones idiomáticas
     text = insertIdiomaticExpressions(text);
-
-    // Paso 6: Introducir errores gramaticales menores
     text = introduceMinorGrammarErrors(text);
-
-    // Paso 7: Variar los tiempos verbales
     text = varyVerbTenses(text);
+    text = addHumanLikePauses(text);
 
     return text;
 }
 
 function replaceWithSynonyms(text) {
     const synonyms = {
-        "puede": "podría",
-        "debe": "debería",
-        "es": "resulta ser",
-        "un": "algún",
-        "una": "cierta",
-        "muy": "extremadamente",
-        "grande": "enorme",
-        "pequeño": "diminuto",
-        "hacer": "realizar",
-        "tener": "poseer",
-        "decir": "mencionar",
-        "ver": "observar",
-        "saber": "conocer",
-        "importante": "crucial",
-        "bueno": "excelente",
-        "malo": "pésimo"
+        "puede": ["podría", "es capaz de", "tiene la posibilidad de"],
+        "debe": ["debería", "tiene que", "está obligado a"],
+        "es": ["resulta ser", "viene a ser", "se considera"],
+        "un": ["algún", "cualquier", "uno"],
+        "una": ["cierta", "alguna", "una clase de"],
+        "muy": ["extremadamente", "sumamente", "realmente"],
+        "grande": ["enorme", "vasto", "gigantesco"],
+        "pequeño": ["diminuto", "minúsculo", "reducido"],
+        "hacer": ["realizar", "efectuar", "llevar a cabo"],
+        "tener": ["poseer", "contar con", "disponer de"],
+        "decir": ["mencionar", "expresar", "comentar"],
+        "ver": ["observar", "contemplar", "mirar"],
+        "saber": ["conocer", "estar al tanto", "tener conocimiento"],
+        "importante": ["crucial", "esencial", "fundamental"],
+        "bueno": ["excelente", "magnífico", "destacado"],
+        "malo": ["pésimo", "terrible", "deficiente"]
     };
 
-    for (const [word, synonym] of Object.entries(synonyms)) {
+    for (const [word, synonymList] of Object.entries(synonyms)) {
         const regex = new RegExp(`\\b${word}\\b`, 'gi');
-        text = text.replace(regex, synonym);
+        text = text.replace(regex, () => {
+            if (Math.random() < 0.3) { // Solo reemplazar el 30% de las veces
+                const randomIndex = Math.floor(Math.random() * synonymList.length);
+                return synonymList[randomIndex];
+            } else {
+                return word; // Mantener la palabra original
+            }
+        });
     }
 
     return text;
@@ -186,8 +172,10 @@ function rephraseSentences(text) {
     const rephrasedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
         if (words.length > 5) {
-            const firstWord = words.shift();
-            words.push(firstWord);
+            if (Math.random() < 0.4) { // Cambiar el orden en el 40% de las oraciones
+                const firstWord = words.shift();
+                words.push(firstWord);
+            }
             return words.join(' ') + '.';
         }
         return sentence + '.';
@@ -197,8 +185,16 @@ function rephraseSentences(text) {
 }
 
 function adjustPunctuation(text) {
-    text = text.replace(/(\w+)(\s)(\w+)/g, '$1,$2$3');
-    text = text.replace(/(\w+)(\s)(\w+)/g, '$1...$2$3');
+    text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
+        if (Math.random() < 0.2) { // Añadir una coma el 20% de las veces
+            return `${p1},${p2}${p3}`;
+        } else if (Math.random() < 0.1) { // Añadir puntos suspensivos el 10% de las veces
+            return `${p1}...${p2}${p3}`;
+        } else {
+            return match;
+        }
+    });
+
     return text;
 }
 
@@ -210,7 +206,7 @@ function varySentenceLength(text) {
         if (words.length > 10) {
             return words.slice(0, 10).join(' ') + '...';
         } else if (words.length < 5) {
-            return sentence + ' Esto añade más detalles.';
+            return sentence + ' Esto añade más detalles.'; // Eliminar esta frase repetitiva
         }
         return sentence;
     });
@@ -231,7 +227,7 @@ function insertIdiomaticExpressions(text) {
     const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
 
     const updatedSentences = sentences.map((sentence, index) => {
-        if (index % 3 === 0 && idiomaticExpressions.length > 0) {
+        if (index % 5 === 0 && idiomaticExpressions.length > 0) { // Reducir la frecuencia al 20%
             const randomExpression = idiomaticExpressions[Math.floor(Math.random() * idiomaticExpressions.length)];
             return `${sentence}. ${randomExpression}.`;
         }
@@ -243,16 +239,23 @@ function insertIdiomaticExpressions(text) {
 
 function introduceMinorGrammarErrors(text) {
     const errors = {
-        "el": "lo",
-        "la": "las",
-        "un": "uno",
-        "es": "ez",
-        "de": "del"
+        "el": ["lo", "el"],
+        "la": ["las", "la"],
+        "un": ["uno", "un"],
+        "es": ["ez", "es"],
+        "de": ["del", "de"]
     };
 
-    for (const [correct, error] of Object.entries(errors)) {
+    for (const [correct, errorList] of Object.entries(errors)) {
         const regex = new RegExp(`\\b${correct}\\b`, 'gi');
-        text = text.replace(regex, error);
+        text = text.replace(regex, () => {
+            if (Math.random() < 0.05) { // Solo el 5% de las veces
+                const randomIndex = Math.floor(Math.random() * errorList.length);
+                return errorList[randomIndex];
+            } else {
+                return correct;
+            }
+        });
     }
 
     return text;
@@ -275,6 +278,24 @@ function varyVerbTenses(text) {
     return text;
 }
 
+function addHumanLikePauses(text) {
+    const pauses = ["...", ",", ";", " -"];
+    const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
+
+    const updatedSentences = sentences.map(sentence => {
+        if (Math.random() < 0.1) { // Añadir pausas en el 10% de las oraciones
+            const randomPause = pauses[Math.floor(Math.random() * pauses.length)];
+            const words = sentence.split(' ');
+            const insertIndex = Math.floor(words.length / 2);
+            words.splice(insertIndex, 0, randomPause);
+            return words.join(' ') + '.';
+        }
+        return sentence + '.';
+    });
+
+    return updatedSentences.join(' ');
+}
+
 function copyText() {
     const outputText = document.getElementById('outputText').innerText;
     navigator.clipboard.writeText(outputText).then(() => {
@@ -284,6 +305,10 @@ function copyText() {
     });
 }
 
-// Agrega los listeners al final del archivo JS
 document.getElementById('humanizeButton').addEventListener('click', humanizeText);
 document.getElementById('copyButton').addEventListener('click', copyText);
+
+// Limpiar el área de texto cuando se selecciona un archivo
+document.getElementById('fileInput').addEventListener('change', function () {
+    document.getElementById('textInput').value = ''; // Limpiar el área de texto
+});

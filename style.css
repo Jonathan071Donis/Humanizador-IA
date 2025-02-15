@@ -211,6 +211,45 @@ footer {
     color: #888888;
 }
 
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reducir el espacio entre elementos */
+    align-items: center;
+}
+
+textarea, input[type="file"], button {
+    width: 100%;
+    padding: 8px; /* Padding más pequeño */
+    border-radius: 8px;
+    border: 2px solid #00ff96;
+    background-color: #262626;
+    color: #ffffff;
+    font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+    transition: border-color 0.3s ease;
+}
+
+textarea {
+    height: 120px; /* Altura reducida */
+    resize: vertical;
+}
+
+input[type="file"] {
+    cursor: pointer;
+}
+
+button {
+    background-color: #00ff96;
+    color: #0d0d0d;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #00cc77;
+}
+
 /* Diseño Responsive */
 @media (max-width: 768px) {
     header h1 {
