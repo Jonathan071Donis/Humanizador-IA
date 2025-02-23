@@ -1,3 +1,28 @@
+// Configurar el worker de PDF.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+// Función para validar el archivo
+function validateFile(file) {
+    // Tipos de archivo permitidos
+    const allowedTypes = ['text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf'];
+    
+    // Tamaño máximo permitido (5 MB)
+    const maxSize = 5 * 1024 * 1024; // 5 MB en bytes
+
+    // Verificar el tipo de archivo
+    if (!allowedTypes.includes(file.type)) {
+        return false; // Tipo de archivo no permitido
+    }
+
+    // Verificar el tamaño del archivo
+    if (file.size > maxSize) {
+        return false; // Tamaño de archivo excede el límite
+    }
+
+    return true; // Archivo válido
+}
+
+// Función principal para humanizar el texto
 function humanizeText() {
     const textInput = document.getElementById('textInput');
     const fileInput = document.getElementById('fileInput');
@@ -5,15 +30,18 @@ function humanizeText() {
     const outputDiv = document.getElementById('outputText');
     outputDiv.innerHTML = 'Cargando...'; // Mensaje temporal mientras se procesa
 
-    // Limpiar el contenido previo
-    outputDiv.innerHTML = '';
+    let textToProcess = '';
 
     if (fileInput.files.length > 0) {
         // Si hay un archivo cargado, ignorar el texto manual
         const file = fileInput.files[0];
 
         if (!validateFile(file)) {
-            alert("Formato de archivo no soportado o tamaño excesivo. Usa .txt, .docx o .pdf (máximo 5 MB).");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Formato de archivo no soportado o tamaño excesivo. Usa .txt, .docx o .pdf (máximo 5 MB).',
+            });
             outputDiv.innerHTML = '';
             return;
         }
@@ -24,19 +52,20 @@ function humanizeText() {
             const fileType = file.name.split('.').pop().toLowerCase();
 
             if (fileType === 'txt') {
-                const text = e.target.result;
-                const sanitizedText = sanitizeInput(text);
-                processAndDisplayText(sanitizedText);
+                textToProcess = e.target.result;
             } else if (fileType === 'docx') {
                 mammoth.extractRawText({ arrayBuffer: e.target.result })
                     .then(result => {
-                        const text = result.value;
-                        const sanitizedText = sanitizeInput(text);
-                        processAndDisplayText(sanitizedText);
+                        textToProcess = result.value;
+                        processAndDisplayText(textToProcess);
                     })
                     .catch(error => {
                         console.error("Error al leer el archivo .docx:", error);
-                        alert("Error al leer el archivo .docx. Asegúrate de que el archivo sea válido.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al leer el archivo .docx. Asegúrate de que el archivo sea válido.',
+                        });
                         outputDiv.innerHTML = '';
                     });
             } else if (fileType === 'pdf') {
@@ -57,80 +86,76 @@ function humanizeText() {
                     }
 
                     Promise.all(pagePromises).then(pages => {
-                        pdfText = pages.join('\n');
-                        const sanitizedText = sanitizeInput(pdfText);
-                        processAndDisplayText(sanitizedText);
+                        textToProcess = pages.join('\n');
+                        processAndDisplayText(textToProcess);
                     });
                 }).catch(error => {
                     console.error("Error al leer el archivo .pdf:", error);
-                    alert("Error al leer el archivo .pdf. Asegúrate de que el archivo sea válido.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al leer el archivo .pdf. Asegúrate de que el archivo sea válido.',
+                    });
                     outputDiv.innerHTML = '';
                 });
+            }
+
+            if (fileType === 'txt') {
+                processAndDisplayText(textToProcess);
             }
         };
 
         reader.readAsArrayBuffer(file);
     } else if (textInput.value.trim() !== '') {
         // Si no hay archivo, usar el texto manual
-        const sanitizedText = sanitizeInput(textInput.value);
-        processAndDisplayText(sanitizedText);
+        textToProcess = textInput.value;
+        processAndDisplayText(textToProcess);
     } else {
-        alert("Por favor, ingresa texto manualmente o selecciona un archivo.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Advertencia',
+            text: 'Por favor, ingresa texto manualmente o selecciona un archivo.',
+        });
         outputDiv.innerHTML = '';
     }
 }
 
+// Función para procesar y mostrar el texto humanizado
 function processAndDisplayText(text) {
-    const humanizedText = processText(text);
-    const outputDiv = document.getElementById('outputText');
+    const sanitizedText = sanitizeInput(text);
+    const humanizedText = humanizeTextContent(sanitizedText);
 
-    // Limpiar el contenido previo
+    const outputDiv = document.getElementById('outputText');
     outputDiv.innerHTML = '';
 
-    const paragraphs = humanizedText.split('\n').filter(p => p.trim() !== '');
-
-    paragraphs.forEach(paragraph => {
-        const pElement = document.createElement('p');
-        pElement.textContent = paragraph;
-        pElement.style.marginBottom = '15px';
-        pElement.style.lineHeight = '1.6';
-        outputDiv.appendChild(pElement);
-    });
+    const pElement = document.createElement('p');
+    pElement.textContent = humanizedText;
+    pElement.style.marginBottom = '15px';
+    pElement.style.lineHeight = '1.6';
+    outputDiv.appendChild(pElement);
 }
 
+// Función para sanitizar el texto (eliminar etiquetas HTML)
 function sanitizeInput(input) {
-    return input.replace(/<[^>]*>?/gm, '');
+    return input.replace(/<[^>]*>?/gm, ''); // Eliminar etiquetas HTML
 }
 
-function validateFile(file) {
-    const allowedTypes = ['txt', 'docx', 'pdf'];
-    const maxSize = 5 * 1024 * 1024;
+// Función para humanizar el contenido del texto
+function humanizeTextContent(text) {
+    // Aplicar humanización paso a paso
+    let humanizedText = text;
 
-    const fileType = file.name.split('.').pop().toLowerCase();
-    if (!allowedTypes.includes(fileType)) {
-        return false;
-    }
+    humanizedText = replaceWithSynonyms(humanizedText);
+    humanizedText = rephraseSentences(humanizedText);
+    humanizedText = adjustPunctuation(humanizedText);
+    humanizedText = varySentenceLength(humanizedText);
+    humanizedText = introduceMinorGrammarErrors(humanizedText);
+    humanizedText = varyVerbTenses(humanizedText);
 
-    if (file.size > maxSize) {
-        return false;
-    }
-
-    return true;
+    return humanizedText;
 }
 
-function processText(text) {
-    text = replaceWithSynonyms(text);
-    text = rephraseSentences(text);
-    text = adjustPunctuation(text);
-    text = varySentenceLength(text);
-    text = insertIdiomaticExpressions(text);
-    text = introduceMinorGrammarErrors(text);
-    text = varyVerbTenses(text);
-    text = addHumanLikePauses(text);
-
-    return text;
-}
-
+// Función para reemplazar palabras con sinónimos
 function replaceWithSynonyms(text) {
     const synonyms = {
         "puede": ["podría", "es capaz de", "tiene la posibilidad de"],
@@ -154,7 +179,7 @@ function replaceWithSynonyms(text) {
     for (const [word, synonymList] of Object.entries(synonyms)) {
         const regex = new RegExp(`\\b${word}\\b`, 'gi');
         text = text.replace(regex, () => {
-            if (Math.random() < 0.3) { // Solo reemplazar el 30% de las veces
+            if (Math.random() < 0.2) { // Solo reemplazar el 20% de las veces
                 const randomIndex = Math.floor(Math.random() * synonymList.length);
                 return synonymList[randomIndex];
             } else {
@@ -166,16 +191,15 @@ function replaceWithSynonyms(text) {
     return text;
 }
 
+// Función para reformular oraciones
 function rephraseSentences(text) {
     const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
 
     const rephrasedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 5) {
-            if (Math.random() < 0.4) { // Cambiar el orden en el 40% de las oraciones
-                const firstWord = words.shift();
-                words.push(firstWord);
-            }
+        if (words.length > 5 && Math.random() < 0.3) { // Cambiar el orden en el 30% de las oraciones largas
+            const firstWord = words.shift();
+            words.push(firstWord);
             return words.join(' ') + '.';
         }
         return sentence + '.';
@@ -184,11 +208,12 @@ function rephraseSentences(text) {
     return rephrasedSentences.join(' ');
 }
 
+// Función para ajustar la puntuación
 function adjustPunctuation(text) {
     text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
-        if (Math.random() < 0.2) { // Añadir una coma el 20% de las veces
+        if (Math.random() < 0.1) { // Añadir una coma solo el 10% de las veces
             return `${p1},${p2}${p3}`;
-        } else if (Math.random() < 0.1) { // Añadir puntos suspensivos el 10% de las veces
+        } else if (Math.random() < 0.05) { // Añadir puntos suspensivos solo el 5% de las veces
             return `${p1}...${p2}${p3}`;
         } else {
             return match;
@@ -198,15 +223,14 @@ function adjustPunctuation(text) {
     return text;
 }
 
+// Función para variar la longitud de las oraciones
 function varySentenceLength(text) {
     const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
 
     const variedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 10) {
+        if (words.length > 10 && Math.random() < 0.2) { // Acortar oraciones largas el 20% de las veces
             return words.slice(0, 10).join(' ') + '...';
-        } else if (words.length < 5) {
-            return sentence + ' Esto añade más detalles.'; // Eliminar esta frase repetitiva
         }
         return sentence;
     });
@@ -214,29 +238,7 @@ function varySentenceLength(text) {
     return variedSentences.join('. ');
 }
 
-function insertIdiomaticExpressions(text) {
-    const idiomaticExpressions = [
-        "al fin y al cabo",
-        "de vez en cuando",
-        "en un abrir y cerrar de ojos",
-        "dar en el clavo",
-        "estar en las nubes",
-        "poner las cartas sobre la mesa"
-    ];
-
-    const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
-
-    const updatedSentences = sentences.map((sentence, index) => {
-        if (index % 5 === 0 && idiomaticExpressions.length > 0) { // Reducir la frecuencia al 20%
-            const randomExpression = idiomaticExpressions[Math.floor(Math.random() * idiomaticExpressions.length)];
-            return `${sentence}. ${randomExpression}.`;
-        }
-        return sentence;
-    });
-
-    return updatedSentences.join('. ');
-}
-
+// Función para introducir errores gramaticales menores
 function introduceMinorGrammarErrors(text) {
     const errors = {
         "el": ["lo", "el"],
@@ -249,7 +251,7 @@ function introduceMinorGrammarErrors(text) {
     for (const [correct, errorList] of Object.entries(errors)) {
         const regex = new RegExp(`\\b${correct}\\b`, 'gi');
         text = text.replace(regex, () => {
-            if (Math.random() < 0.05) { // Solo el 5% de las veces
+            if (Math.random() < 0.03) { // Solo el 3% de las veces
                 const randomIndex = Math.floor(Math.random() * errorList.length);
                 return errorList[randomIndex];
             } else {
@@ -261,6 +263,7 @@ function introduceMinorGrammarErrors(text) {
     return text;
 }
 
+// Función para variar los tiempos verbales
 function varyVerbTenses(text) {
     const verbTenses = {
         "es": "era",
@@ -272,43 +275,48 @@ function varyVerbTenses(text) {
 
     for (const [present, past] of Object.entries(verbTenses)) {
         const regex = new RegExp(`\\b${present}\\b`, 'gi');
-        text = text.replace(regex, past);
+        text = text.replace(regex, () => {
+            if (Math.random() < 0.1) { // Cambiar el tiempo verbal solo el 10% de las veces
+                return past;
+            } else {
+                return present;
+            }
+        });
     }
 
     return text;
 }
 
-function addHumanLikePauses(text) {
-    const pauses = ["...", ",", ";", " -"];
-    const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
-
-    const updatedSentences = sentences.map(sentence => {
-        if (Math.random() < 0.1) { // Añadir pausas en el 10% de las oraciones
-            const randomPause = pauses[Math.floor(Math.random() * pauses.length)];
-            const words = sentence.split(' ');
-            const insertIndex = Math.floor(words.length / 2);
-            words.splice(insertIndex, 0, randomPause);
-            return words.join(' ') + '.';
-        }
-        return sentence + '.';
-    });
-
-    return updatedSentences.join(' ');
-}
-
+// Función para copiar el texto humanizado al portapapeles
 function copyText() {
     const outputText = document.getElementById('outputText').innerText;
     navigator.clipboard.writeText(outputText).then(() => {
-        alert('Texto copiado al portapapeles.');
+        Swal.fire({
+            icon: 'success',
+            title: 'Texto copiado',
+            text: 'El texto ha sido copiado al portapapeles.',
+            showConfirmButton: false,
+            timer: 1500,
+        });
     }).catch(() => {
-        alert('Error al copiar el texto.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo copiar el texto.',
+        });
     });
 }
 
+// Event listeners
 document.getElementById('humanizeButton').addEventListener('click', humanizeText);
 document.getElementById('copyButton').addEventListener('click', copyText);
 
 // Limpiar el área de texto cuando se selecciona un archivo
 document.getElementById('fileInput').addEventListener('change', function () {
     document.getElementById('textInput').value = ''; // Limpiar el área de texto
+});
+
+// Limpiar el área de archivos cuando se escribe en el área de texto
+document.getElementById('textInput').addEventListener('input', function () {
+    document.getElementById('fileInput').value = ''; // Limpiar el área de archivos
 });

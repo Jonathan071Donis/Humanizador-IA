@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self';">
+    <!-- CSP actualizado para permitir SweetAlert2 y otros recursos -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; worker-src 'self' blob:;">
     <title>Humanizador de Texto</title>
     <link rel="icon" type="image/png" href="img/favicon.ico.jpg">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Mammoth.js para .docx -->
     <script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
     <!-- PDF.js para .pdf -->
@@ -42,6 +45,8 @@
             <p>&copy; 2025 Humanizador de Texto. Todos los derechos reservados. Donis071-🥷</p>
         </footer>
     </div>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="script.js"></script>
 </body>
 </html>
