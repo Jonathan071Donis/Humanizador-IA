@@ -3,23 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSP actualizado para permitir SweetAlert2 y otros recursos -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://w7.pngwing.com; 
+        script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+        style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+        img-src 'self' data: https://w7.pngwing.com https://cors-anywhere.herokuapp.com; 
+        worker-src 'self' blob:;
+    ">
     <title>Humanizador de Texto</title>
-    <link rel="icon" type="image/png" href="img/favicon.ico.jpg">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico.jpg">
     <link rel="stylesheet" href="style.css">
-    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Mammoth.js para .docx -->
     <script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
-    <!-- PDF.js para .pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/docx@8.0.0/build/index.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Humanizador de Texto</h1>
             <p>Transforma tu texto en algo único y profesional.</p>
+            <img src="img/texto.png" alt="Logo" id="logoImage" style="width: 100px; height: auto;">
         </header>
         <main>
             <div class="input-section">
@@ -35,6 +40,11 @@
                 <div class="output-box">
                     <div id="outputText"></div>
                 </div>
+                <div class="download-buttons">
+                    <button id="downloadWord">Descargar en Word</button>
+                    <button id="downloadPdf">Descargar en PDF</button>
+                    <button id="downloadTxt">Descargar en TXT</button>
+                </div>
                 <div class="human-verification">
                     <span id="verificationText">Texto 100% realizado por humanos</span>
                     <div class="verification-icon">✔️</div>
@@ -45,7 +55,6 @@
             <p>&copy; 2025 Humanizador de Texto. Todos los derechos reservados. Donis071-🥷</p>
         </footer>
     </div>
-    <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="script.js"></script>
 </body>

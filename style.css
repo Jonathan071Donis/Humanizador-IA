@@ -19,6 +19,16 @@ body {
     width: 90%;
     max-width: 800px;
     margin: 20px;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 header {
@@ -135,6 +145,7 @@ button:hover {
     border: 2px solid #00ff96;
     padding: 8px 12px;
     font-size: 0.9rem;
+    transition: background-color 0.3s ease;
 }
 
 #copyButton:hover {
@@ -153,11 +164,11 @@ button:hover {
     font-size: 14px;
     line-height: 1.6;
     color: #ffffff;
-    white-space: pre-wrap; /* Mantener saltos de línea y espacios */
+    white-space: pre-wrap;
 }
 
 #outputText p {
-    margin: 0 0 15px 0; /* Espaciado entre párrafos */
+    margin: 0 0 15px 0;
 }
 
 .human-verification {
@@ -170,15 +181,6 @@ button:hover {
     border-radius: 8px;
     border: 2px solid #00ff96;
     animation: fadeIn 1s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
 }
 
 .human-verification span {
@@ -211,43 +213,39 @@ footer {
     color: #888888;
 }
 
-.input-section {
+.download-buttons {
     display: flex;
-    flex-direction: column;
-    gap: 8px; /* Reducir el espacio entre elementos */
-    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
 }
 
-textarea, input[type="file"], button {
-    width: 100%;
-    padding: 8px; /* Padding más pequeño */
-    border-radius: 8px;
-    border: 2px solid #00ff96;
-    background-color: #262626;
-    color: #ffffff;
-    font-size: 0.9rem; /* Tamaño de fuente más pequeño */
-    transition: border-color 0.3s ease;
-}
-
-textarea {
-    height: 120px; /* Altura reducida */
-    resize: vertical;
-}
-
-input[type="file"] {
-    cursor: pointer;
-}
-
-button {
+.download-buttons button {
+    padding: 10px;
     background-color: #00ff96;
     color: #0d0d0d;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.download-buttons button:hover {
     background-color: #00cc77;
+}
+
+/* Ajustes para alinear inputs */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch; /* Asegura que todos los inputs tengan el mismo ancho */
+}
+
+textarea, input[type="file"], button {
+    width: 100%; /* Todos los inputs ocupan el 100% del ancho disponible */
+    box-sizing: border-box; /* Incluye el padding en el ancho total */
 }
 
 /* Diseño Responsive */
@@ -292,5 +290,13 @@ button:hover {
 
     .output-box {
         max-height: 150px;
+    }
+
+    .download-buttons {
+        flex-direction: column;
+    }
+
+    .download-buttons button {
+        width: 100%;
     }
 }

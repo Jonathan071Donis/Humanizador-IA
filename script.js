@@ -3,37 +3,30 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 
 // Función para validar el archivo
 function validateFile(file) {
-    // Tipos de archivo permitidos
     const allowedTypes = ['text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf'];
-    
-    // Tamaño máximo permitido (5 MB)
-    const maxSize = 5 * 1024 * 1024; // 5 MB en bytes
+    const maxSize = 5 * 1024 * 1024; // 5 MB
 
-    // Verificar el tipo de archivo
     if (!allowedTypes.includes(file.type)) {
-        return false; // Tipo de archivo no permitido
+        return false;
     }
 
-    // Verificar el tamaño del archivo
     if (file.size > maxSize) {
-        return false; // Tamaño de archivo excede el límite
+        return false;
     }
 
-    return true; // Archivo válido
+    return true;
 }
 
 // Función principal para humanizar el texto
 function humanizeText() {
     const textInput = document.getElementById('textInput');
     const fileInput = document.getElementById('fileInput');
-
     const outputDiv = document.getElementById('outputText');
-    outputDiv.innerHTML = 'Cargando...'; // Mensaje temporal mientras se procesa
+    outputDiv.innerHTML = 'Cargando...';
 
     let textToProcess = '';
 
     if (fileInput.files.length > 0) {
-        // Si hay un archivo cargado, ignorar el texto manual
         const file = fileInput.files[0];
 
         if (!validateFile(file)) {
@@ -107,7 +100,6 @@ function humanizeText() {
 
         reader.readAsArrayBuffer(file);
     } else if (textInput.value.trim() !== '') {
-        // Si no hay archivo, usar el texto manual
         textToProcess = textInput.value;
         processAndDisplayText(textToProcess);
     } else {
@@ -128,21 +120,25 @@ function processAndDisplayText(text) {
     const outputDiv = document.getElementById('outputText');
     outputDiv.innerHTML = '';
 
-    const pElement = document.createElement('p');
-    pElement.textContent = humanizedText;
-    pElement.style.marginBottom = '15px';
-    pElement.style.lineHeight = '1.6';
-    outputDiv.appendChild(pElement);
+    // Dividir el texto en párrafos
+    const paragraphs = humanizedText.split('\n').filter(p => p.trim() !== '');
+
+    paragraphs.forEach(paragraph => {
+        const pElement = document.createElement('p');
+        pElement.textContent = paragraph;
+        pElement.style.marginBottom = '15px';
+        pElement.style.lineHeight = '1.6';
+        outputDiv.appendChild(pElement);
+    });
 }
 
-// Función para sanitizar el texto (eliminar etiquetas HTML)
+// Función para sanitizar el texto
 function sanitizeInput(input) {
     return input.replace(/<[^>]*>?/gm, ''); // Eliminar etiquetas HTML
 }
 
 // Función para humanizar el contenido del texto
 function humanizeTextContent(text) {
-    // Aplicar humanización paso a paso
     let humanizedText = text;
 
     humanizedText = replaceWithSynonyms(humanizedText);
@@ -183,7 +179,7 @@ function replaceWithSynonyms(text) {
                 const randomIndex = Math.floor(Math.random() * synonymList.length);
                 return synonymList[randomIndex];
             } else {
-                return word; // Mantener la palabra original
+                return word;
             }
         });
     }
@@ -197,7 +193,7 @@ function rephraseSentences(text) {
 
     const rephrasedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 5 && Math.random() < 0.3) { // Cambiar el orden en el 30% de las oraciones largas
+        if (words.length > 5 && Math.random() < 0.1) { // Reordenar solo el 10% de las oraciones largas
             const firstWord = words.shift();
             words.push(firstWord);
             return words.join(' ') + '.';
@@ -210,10 +206,18 @@ function rephraseSentences(text) {
 
 // Función para ajustar la puntuación
 function adjustPunctuation(text) {
+    // Añadir comas solo en casos específicos
     text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
-        if (Math.random() < 0.1) { // Añadir una coma solo el 10% de las veces
+        if (Math.random() < 0.03) { // Reducir la probabilidad de añadir una coma al 3%
             return `${p1},${p2}${p3}`;
-        } else if (Math.random() < 0.05) { // Añadir puntos suspensivos solo el 5% de las veces
+        } else {
+            return match;
+        }
+    });
+
+    // Añadir puntos suspensivos solo en casos específicos
+    text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
+        if (Math.random() < 0.01) { // Reducir la probabilidad de añadir puntos suspensivos al 1%
             return `${p1}...${p2}${p3}`;
         } else {
             return match;
@@ -229,8 +233,8 @@ function varySentenceLength(text) {
 
     const variedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 10 && Math.random() < 0.2) { // Acortar oraciones largas el 20% de las veces
-            return words.slice(0, 10).join(' ') + '...';
+        if (words.length > 15 && Math.random() < 0.1) { // Acortar solo el 10% de las oraciones muy largas
+            return words.slice(0, 15).join(' ') + '...';
         }
         return sentence;
     });
@@ -313,10 +317,178 @@ document.getElementById('copyButton').addEventListener('click', copyText);
 
 // Limpiar el área de texto cuando se selecciona un archivo
 document.getElementById('fileInput').addEventListener('change', function () {
-    document.getElementById('textInput').value = ''; // Limpiar el área de texto
+    document.getElementById('textInput').value = '';
 });
 
 // Limpiar el área de archivos cuando se escribe en el área de texto
 document.getElementById('textInput').addEventListener('input', function () {
-    document.getElementById('fileInput').value = ''; // Limpiar el área de archivos
+    document.getElementById('fileInput').value = '';
+});
+// Función para mostrar alertas que se cierran automáticamente
+function showAlert(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 2000, // Duración de 2 segundos
+        timerProgressBar: true,
+    });
+}
+
+// Función para descargar en Word (.docx)
+// Función para descargar en Word (.docx)
+document.getElementById('downloadWord').addEventListener('click', function () {
+    const outputText = document.getElementById('outputText').innerText;
+
+    // Crear un documento de Word con la librería docx
+    const doc = new docx.Document({
+        sections: [{
+            properties: {},
+            children: [
+                // Agregar el "logo" de texto
+                new docx.Paragraph({
+                    children: [
+                        new docx.TextRun({
+                            text: "Donis071-🥷",
+                            bold: true,
+                            size: 28,
+                            font: 'Arial'
+                        })
+                    ],
+                    alignment: docx.AlignmentType.CENTER,
+                    spacing: { after: 200 }
+                }),
+                new docx.Paragraph({
+                    children: [
+                        new docx.TextRun({
+                            text: "Todos los Derechos reservados 071$ 🥷.",
+                            italics: true,
+                            size: 24,
+                            font: 'Arial'
+                        })
+                    ],
+                    alignment: docx.AlignmentType.CENTER,
+                    spacing: { after: 300 }
+                }),
+                // Agregar el texto
+                ...outputText.split('\n').filter(p => p.trim() !== '').map(paragraph => (
+                    new docx.Paragraph({
+                        children: [
+                            new docx.TextRun({
+                                text: paragraph,
+                                size: 24,
+                                font: 'Arial'
+                            })
+                        ],
+                        spacing: {
+                            after: 200,
+                            line: 240
+                        }
+                    })
+                )),
+                // Agregar un pie de página
+                new docx.Paragraph({
+                    children: [
+                        new docx.TextRun({
+                            text: "Donis071-🥷",
+                            size: 10,
+                            font: 'Arial',
+                            color: '999999'
+                        })
+                    ],
+                    alignment: docx.AlignmentType.CENTER,
+                    spacing: { before: 200 }
+                })
+            ]
+        }]
+    });
+
+    // Guardar el documento
+    docx.Packer.toBlob(doc).then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'texto_humanizado.docx';
+        a.click();
+        URL.revokeObjectURL(url);
+        showAlert('Éxito!', 'Documento Word descargado con éxito'); // Usar la nueva función de alerta
+    });
+});
+
+
+// Función para descargar en PDF
+document.getElementById('downloadPdf').addEventListener('click', function () {
+    const outputText = document.getElementById('outputText').innerText;
+    const { jsPDF } = window.jspdf;
+
+    // Crear un nuevo documento PDF
+    const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    // Configurar márgenes y fuente
+    const margin = 15;
+    const lineHeight = 10; // Espacio entre líneas
+    const fontSizeTitle = 18;
+    const fontSizeSubtitle = 14;
+    const fontSizeText = 12;
+    const pageWidth = doc.internal.pageSize.getWidth() - 2 * margin;
+
+    // Título del documento
+    doc.setFontSize(fontSizeTitle);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Donis071- ^_~ - ^.^ ", doc.internal.pageSize.getWidth() / 2, margin, { align: 'center' });
+
+    // Línea horizontal debajo del título
+    doc.setLineWidth(0.5);
+    doc.line(margin, margin + 10, pageWidth + margin, margin + 10); // Dibuja una línea horizontal
+
+    // Subtítulo opcional
+    doc.setFontSize(fontSizeSubtitle);
+    doc.setTextColor(100, 100, 100); // Un gris más claro
+    doc.text("Todos los Derechos reservados 071$.", doc.internal.pageSize.getWidth() / 2, margin + 15, { align: 'center' });
+
+    // Configurar el texto principal
+    doc.setFontSize(fontSizeText);
+    doc.setTextColor(50, 50, 50); // Gris suave
+
+    // Dividir el texto en líneas que quepan en el ancho de la página
+    const lines = doc.splitTextToSize(outputText, pageWidth);
+    let y = margin + 30; // Ajustar la posición Y para el texto
+
+    lines.forEach((line) => {
+        if (y > doc.internal.pageSize.getHeight() - margin - 20) {
+            doc.addPage();
+            y = margin; // Reiniciar la posición Y al inicio de la nueva página
+        }
+        doc.text(line, margin, y);
+        y += lineHeight; // Ajustar la posición Y para la siguiente línea
+    });
+
+    // Agregar un pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150); // Un gris más claro
+    const footerText = "Página " + doc.internal.getNumberOfPages();
+    doc.text(footerText, margin, doc.internal.pageSize.getHeight() - margin); // Colocar en el pie de página
+
+    // Guardar el PDF
+    doc.save('texto_humanizado.pdf');
+    showAlert('Éxito!', 'Documento PDF descargado con éxito'); // Usar la nueva función de alerta
+});
+
+// Función para descargar en TXT
+document.getElementById('downloadTxt').addEventListener('click', function () {
+    const outputText = document.getElementById('outputText').innerText;
+    const content = "Donis071-🥷\n\n" + outputText;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'texto_humanizado.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showAlert('Éxito!', 'Documento TXT descargado con éxito'); // Usar la nueva función de alerta
 });
