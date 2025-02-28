@@ -1,4 +1,4 @@
-// Configurar el worker de PDF.js
+// Configurar el worker de PDF.js con HTTPS
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
 // Función para validar el archivo
@@ -147,6 +147,8 @@ function humanizeTextContent(text) {
     humanizedText = varySentenceLength(humanizedText);
     humanizedText = introduceMinorGrammarErrors(humanizedText);
     humanizedText = varyVerbTenses(humanizedText);
+    humanizedText = addFillerWords(humanizedText);
+    humanizedText = addIdiomaticExpressions(humanizedText);
 
     return humanizedText;
 }
@@ -175,7 +177,7 @@ function replaceWithSynonyms(text) {
     for (const [word, synonymList] of Object.entries(synonyms)) {
         const regex = new RegExp(`\\b${word}\\b`, 'gi');
         text = text.replace(regex, () => {
-            if (Math.random() < 0.2) { // Solo reemplazar el 20% de las veces
+            if (Math.random() < 0.5) { // Aumentar la probabilidad de reemplazo al 50%
                 const randomIndex = Math.floor(Math.random() * synonymList.length);
                 return synonymList[randomIndex];
             } else {
@@ -193,7 +195,7 @@ function rephraseSentences(text) {
 
     const rephrasedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 5 && Math.random() < 0.1) { // Reordenar solo el 10% de las oraciones largas
+        if (words.length > 5 && Math.random() < 0.3) { // Aumentar la probabilidad de reordenar al 30%
             const firstWord = words.shift();
             words.push(firstWord);
             return words.join(' ') + '.';
@@ -208,7 +210,7 @@ function rephraseSentences(text) {
 function adjustPunctuation(text) {
     // Añadir comas solo en casos específicos
     text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
-        if (Math.random() < 0.03) { // Reducir la probabilidad de añadir una coma al 3%
+        if (Math.random() < 0.1) { // Aumentar la probabilidad de añadir una coma al 10%
             return `${p1},${p2}${p3}`;
         } else {
             return match;
@@ -217,7 +219,7 @@ function adjustPunctuation(text) {
 
     // Añadir puntos suspensivos solo en casos específicos
     text = text.replace(/(\w+)(\s)(\w+)/g, (match, p1, p2, p3) => {
-        if (Math.random() < 0.01) { // Reducir la probabilidad de añadir puntos suspensivos al 1%
+        if (Math.random() < 0.05) { // Aumentar la probabilidad de añadir puntos suspensivos al 5%
             return `${p1}...${p2}${p3}`;
         } else {
             return match;
@@ -233,7 +235,7 @@ function varySentenceLength(text) {
 
     const variedSentences = sentences.map(sentence => {
         const words = sentence.split(' ');
-        if (words.length > 15 && Math.random() < 0.1) { // Acortar solo el 10% de las oraciones muy largas
+        if (words.length > 15 && Math.random() < 0.3) { // Aumentar la probabilidad de acortar al 30%
             return words.slice(0, 15).join(' ') + '...';
         }
         return sentence;
@@ -255,7 +257,7 @@ function introduceMinorGrammarErrors(text) {
     for (const [correct, errorList] of Object.entries(errors)) {
         const regex = new RegExp(`\\b${correct}\\b`, 'gi');
         text = text.replace(regex, () => {
-            if (Math.random() < 0.03) { // Solo el 3% de las veces
+            if (Math.random() < 0.1) { // Aumentar la probabilidad de errores al 10%
                 const randomIndex = Math.floor(Math.random() * errorList.length);
                 return errorList[randomIndex];
             } else {
@@ -280,7 +282,7 @@ function varyVerbTenses(text) {
     for (const [present, past] of Object.entries(verbTenses)) {
         const regex = new RegExp(`\\b${present}\\b`, 'gi');
         text = text.replace(regex, () => {
-            if (Math.random() < 0.1) { // Cambiar el tiempo verbal solo el 10% de las veces
+            if (Math.random() < 0.3) { // Aumentar la probabilidad de cambiar el tiempo verbal al 30%
                 return past;
             } else {
                 return present;
@@ -289,6 +291,50 @@ function varyVerbTenses(text) {
     }
 
     return text;
+}
+
+// Función para añadir palabras de relleno
+function addFillerWords(text) {
+    const fillerWords = ["eh", "bueno", "entonces", "así que", "pues", "o sea"];
+    const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
+
+    const filledSentences = sentences.map(sentence => {
+        if (Math.random() < 0.2) { // Añadir palabras de relleno al 20% de las oraciones
+            const randomIndex = Math.floor(Math.random() * fillerWords.length);
+            return `${fillerWords[randomIndex]}, ${sentence}`;
+        }
+        return sentence;
+    });
+
+    return filledSentences.join('. ');
+}
+
+// Función para añadir expresiones idiomáticas
+function addIdiomaticExpressions(text) {
+    const idiomaticExpressions = [
+        "al fin y al cabo",
+        "de vez en cuando",
+        "en un abrir y cerrar de ojos",
+        "por si las moscas",
+        "a la larga",
+        "a corto plazo",
+        "a pie juntillas",
+        "a todo dar",
+        "a la buena de Dios",
+        "a la vuelta de la esquina"
+    ];
+
+    const sentences = text.split(/[.!?]/).filter(s => s.trim() !== '');
+
+    const idiomaticSentences = sentences.map(sentence => {
+        if (Math.random() < 0.2) { // Añadir expresiones idiomáticas al 20% de las oraciones
+            const randomIndex = Math.floor(Math.random() * idiomaticExpressions.length);
+            return `${sentence} ${idiomaticExpressions[randomIndex]}.`;
+        }
+        return sentence;
+    });
+
+    return idiomaticSentences.join(' ');
 }
 
 // Función para copiar el texto humanizado al portapapeles
@@ -324,6 +370,7 @@ document.getElementById('fileInput').addEventListener('change', function () {
 document.getElementById('textInput').addEventListener('input', function () {
     document.getElementById('fileInput').value = '';
 });
+
 // Función para mostrar alertas que se cierran automáticamente
 function showAlert(title, text) {
     Swal.fire({
@@ -336,7 +383,6 @@ function showAlert(title, text) {
     });
 }
 
-// Función para descargar en Word (.docx)
 // Función para descargar en Word (.docx)
 document.getElementById('downloadWord').addEventListener('click', function () {
     const outputText = document.getElementById('outputText').innerText;
@@ -415,7 +461,6 @@ document.getElementById('downloadWord').addEventListener('click', function () {
         showAlert('Éxito!', 'Documento Word descargado con éxito'); // Usar la nueva función de alerta
     });
 });
-
 
 // Función para descargar en PDF
 document.getElementById('downloadPdf').addEventListener('click', function () {
