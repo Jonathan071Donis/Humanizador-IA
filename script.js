@@ -573,54 +573,11 @@ document.getElementById('takePhotoButton').addEventListener('click', function ()
     });
 });
 
-// Función para tomar una foto con la cámara trasera o frontal
-document.getElementById('takePhotoButton').addEventListener('click', function () {
-    // Mostrar un cuadro de diálogo para que el usuario elija la cámara
-    Swal.fire({
-        title: 'Selecciona la cámara',
-        text: '¿Quieres usar la cámara frontal o trasera?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cámara Trasera',
-        denyButtonText: 'Cámara Frontal',
-        cancelButtonText: 'Cancelar',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Usar la cámara trasera
-            openCamera({ facingMode: 'environment' });
-        } else if (result.isDenied) {
-            // Usar la cámara frontal
-            openCamera({ facingMode: 'user' });
-        }
-    });
-});
-
-// Función para tomar una foto con la cámara trasera o frontal
-document.getElementById('takePhotoButton').addEventListener('click', function () {
-    // Mostrar un cuadro de diálogo para que el usuario elija la cámara
-    Swal.fire({
-        title: 'Selecciona la cámara',
-        text: '¿Quieres usar la cámara frontal o trasera?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cámara Trasera',
-        denyButtonText: 'Cámara Frontal',
-        cancelButtonText: 'Cancelar',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Usar la cámara trasera
-            openCamera({ facingMode: 'environment' });
-        } else if (result.isDenied) {
-            // Usar la cámara frontal
-            openCamera({ facingMode: 'user' });
-        }
-    });
-});
-
 // Función para abrir la cámara y tomar una foto
 function openCamera(constraints) {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: constraints })
+        // Solicitar acceso a la cámara (solo video, no audio)
+        navigator.mediaDevices.getUserMedia({ video: constraints, audio: false })
             .then(function (stream) {
                 // Crear un elemento de video para mostrar la cámara
                 const video = document.createElement('video');
@@ -678,14 +635,16 @@ function openCamera(constraints) {
                             // Mostrar el texto en el campo de entrada
                             document.getElementById('textInput').value = text;
 
-                            // Enfocar el campo de entrada para que el usuario pueda editar el texto
-                            document.getElementById('textInput').focus();
+                            // Mostrar la imagen capturada en un elemento <img>
+                            const capturedImage = document.getElementById('capturedImage');
+                            capturedImage.src = imageData;
+                            capturedImage.style.display = 'block';
 
                             // Mostrar un mensaje de éxito
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Texto extraído',
-                                text: 'El texto se ha cargado correctamente. Ahora puedes humanizarlo.',
+                                text: 'El texto se ha cargado correctamente.',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
