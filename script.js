@@ -550,127 +550,132 @@ document.getElementById('toggleModeButton').addEventListener('click', function (
     }
 });
 
-
-// Función para tomar una foto con la cámara trasera o frontal
-document.getElementById('takePhotoButton').addEventListener('click', function () {
-    // Mostrar un cuadro de diálogo para que el usuario elija la cámara
-    Swal.fire({
-        title: 'Selecciona la cámara',
-        text: '¿Quieres usar la cámara frontal o trasera?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cámara Trasera',
-        denyButtonText: 'Cámara Frontal',
-        cancelButtonText: 'Cancelar',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Usar la cámara trasera
-            openCamera({ facingMode: 'environment' });
-        } else if (result.isDenied) {
-            // Usar la cámara frontal
-            openCamera({ facingMode: 'user' });
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    // Función para tomar una foto con la cámara trasera o frontal
+    document.getElementById('takePhotoButton').addEventListener('click', function () {
+        // Mostrar un cuadro de diálogo para que el usuario elija la cámara
+        Swal.fire({
+            title: 'Selecciona la cámara',
+            text: '¿Quieres usar la cámara frontal o trasera?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Cámara Trasera',
+            denyButtonText: 'Cámara Frontal',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Usar la cámara trasera
+                openCamera({ facingMode: 'environment' });
+            } else if (result.isDenied) {
+                // Usar la cámara frontal
+                openCamera({ facingMode: 'user' });
+            }
+        });
     });
-});
 
-// Función para abrir la cámara y tomar una foto
-function openCamera(constraints) {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Solicitar acceso a la cámara (solo video, no audio)
-        navigator.mediaDevices.getUserMedia({ video: constraints, audio: false })
-            .then(function (stream) {
-                // Crear un elemento de video para mostrar la cámara
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
+    // Función para abrir la cámara y tomar una foto
+    function openCamera(constraints) {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Solicitar acceso a la cámara (solo video, no audio)
+            navigator.mediaDevices.getUserMedia({ video: constraints, audio: false })
+                .then(function (stream) {
+                    // Crear un elemento de video para mostrar la cámara
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
 
-                // Crear un canvas para capturar la foto
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
+                    // Crear un canvas para capturar la foto
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
 
-                // Mostrar la cámara en un cuadro de diálogo de SweetAlert2
-                Swal.fire({
-                    title: 'Toma una foto',
-                    html: `<video id="cameraPreview" autoplay style="width: 100%;"></video>`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Capturar',
-                    cancelButtonText: 'Cancelar',
-                    didOpen: () => {
-                        const preview = document.getElementById('cameraPreview');
-                        preview.srcObject = stream;
-                    },
-                    preConfirm: () => {
-                        // Capturar la foto desde el video
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    // Mostrar la cámara en un cuadro de diálogo de SweetAlert2
+                    Swal.fire({
+                        title: 'Toma una foto',
+                        html: `<video id="cameraPreview" autoplay style="width: 100%;"></video>`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Capturar',
+                        cancelButtonText: 'Cancelar',
+                        didOpen: () => {
+                            const preview = document.getElementById('cameraPreview');
+                            preview.srcObject = stream;
+                        },
+                        preConfirm: () => {
+                            // Capturar la foto desde el video
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                        // Detener la transmisión de la cámara
-                        stream.getTracks().forEach(track => track.stop());
+                            // Detener la transmisión de la cámara
+                            stream.getTracks().forEach(track => track.stop());
 
-                        // Convertir la imagen capturada a base64
-                        const imageData = canvas.toDataURL('image/png');
+                            // Convertir la imagen capturada a base64
+                            const imageData = canvas.toDataURL('image/png');
 
-                        // Cerrar el cuadro de diálogo de la cámara
-                        Swal.close();
-
-                        // Mostrar un indicador de carga mientras se procesa la imagen
-                        Swal.fire({
-                            title: 'Procesando imagen...',
-                            text: 'Por favor, espera mientras se extrae el texto.',
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // Usar Tesseract.js para escanear el texto de la imagen
-                        return Tesseract.recognize(
-                            imageData,
-                            'spa' // Idioma español
-                        ).then(({ data: { text } }) => {
-                            // Cerrar el indicador de carga
+                            // Cerrar el cuadro de diálogo de la cámara
                             Swal.close();
 
-                            // Mostrar el texto en el campo de entrada
-                            document.getElementById('textInput').value = text;
-
-                            // Mostrar la imagen capturada en un elemento <img>
-                            const capturedImage = document.getElementById('capturedImage');
-                            capturedImage.src = imageData;
-                            capturedImage.style.display = 'block';
-
-                            // Mostrar un mensaje de éxito
+                            // Mostrar un indicador de carga mientras se procesa la imagen
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Texto extraído',
-                                text: 'El texto se ha cargado correctamente.',
-                                timer: 2000,
-                                showConfirmButton: false
+                                title: 'Procesando imagen...',
+                                text: 'Por favor, espera mientras se extrae el texto.',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
                             });
-                        }).catch(error => {
-                            console.error("Error al escanear el texto:", error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'No se pudo escanear el texto de la imagen.',
+
+                            // Usar Tesseract.js para escanear el texto de la imagen
+                            return Tesseract.recognize(
+                                imageData,
+                                'spa' // Idioma español
+                            ).then(({ data: { text } }) => {
+                                // Cerrar el indicador de carga
+                                Swal.close();
+
+                                // Mostrar el texto en el campo de entrada
+                                document.getElementById('textInput').value = text;
+
+                                // Mostrar la imagen capturada en un elemento <img>
+                                const capturedImage = document.getElementById('capturedImage');
+                                if (capturedImage) {
+                                    capturedImage.src = imageData;
+                                    capturedImage.style.display = 'block';
+                                } else {
+                                    console.error("Elemento 'capturedImage' no encontrado.");
+                                }
+
+                                // Mostrar un mensaje de éxito
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Texto extraído',
+                                    text: 'El texto se ha cargado correctamente.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }).catch(error => {
+                                console.error("Error al escanear el texto:", error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'No se pudo escanear el texto de la imagen.',
+                                });
                             });
-                        });
-                    }
+                        }
+                    });
+                })
+                .catch(function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo acceder a la cámara. Asegúrate de permitir el acceso a la cámara.',
+                    });
                 });
-            })
-            .catch(function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo acceder a la cámara. Asegúrate de permitir el acceso a la cámara.',
-                });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Tu navegador no soporta la funcionalidad de cámara.',
             });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Tu navegador no soporta la funcionalidad de cámara.',
-        });
+        }
     }
-}
+});

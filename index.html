@@ -36,9 +36,11 @@
                 <textarea id="textInput" placeholder="Ingresa tu texto aquí..."></textarea>
                 <input type="file" id="fileInput" accept=".txt,.docx,.pdf">
                 <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
-               
+                
+                <!-- Agrega este elemento para mostrar la imagen capturada -->
+                <img id="capturedImage" src="#" alt="Imagen capturada" style="display: none; max-width: 100%; margin-top: 20px;">
+                
                 <button id="humanizeButton">Humanizar Texto</button>
-               
             </div>
             <div class="output-section">
                 <div class="output-header">
