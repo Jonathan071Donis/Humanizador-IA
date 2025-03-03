@@ -549,49 +549,6 @@ document.getElementById('toggleModeButton').addEventListener('click', function (
         button.textContent = 'Modo  Día ';
     }
 });
-// Función para tomar una foto con la cámara trasera o frontal
-document.getElementById('takePhotoButton').addEventListener('click', function () {
-    // Mostrar un cuadro de diálogo para que el usuario elija la cámara
-    Swal.fire({
-        title: 'Selecciona la cámara',
-        text: '¿Quieres usar la cámara frontal o trasera?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cámara Trasera',
-        denyButtonText: 'Cámara Frontal',
-        cancelButtonText: 'Cancelar',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Usar la cámara trasera
-            openCamera({ facingMode: 'environment' });
-        } else if (result.isDenied) {
-            // Usar la cámara frontal
-            openCamera({ facingMode: 'user' });
-        }
-    });
-});
-
-// Función para tomar una foto con la cámara trasera o frontal
-document.getElementById('takePhotoButton').addEventListener('click', function () {
-    // Mostrar un cuadro de diálogo para que el usuario elija la cámara
-    Swal.fire({
-        title: 'Selecciona la cámara',
-        text: '¿Quieres usar la cámara frontal o trasera?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cámara Trasera',
-        denyButtonText: 'Cámara Frontal',
-        cancelButtonText: 'Cancelar',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Usar la cámara trasera
-            openCamera({ facingMode: 'environment' });
-        } else if (result.isDenied) {
-            // Usar la cámara frontal
-            openCamera({ facingMode: 'user' });
-        }
-    });
-});
 
 // Función para tomar una foto con la cámara trasera o frontal
 document.getElementById('takePhotoButton').addEventListener('click', function () {
@@ -649,6 +606,9 @@ function openCamera(constraints) {
                         // Detener la transmisión de la cámara
                         stream.getTracks().forEach(track => track.stop());
 
+                        // Preprocesar la imagen (escala de grises y umbralización)
+                        preprocessImage(canvas);
+
                         // Convertir la imagen capturada a base64
                         const imageData = canvas.toDataURL('image/png');
 
@@ -668,13 +628,20 @@ function openCamera(constraints) {
                         // Usar Tesseract.js para escanear el texto de la imagen
                         return Tesseract.recognize(
                             imageData,
-                            'spa' // Idioma español
+                            'spa', // Idioma español
+                            {
+                                logger: m => console.log(m), // Para ver el progreso
+                                tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK // Modo de segmentación
+                            }
                         ).then(({ data: { text } }) => {
                             // Cerrar el indicador de carga
                             Swal.close();
 
+                            // Postprocesar el texto (corregir espacios y palabras comunes)
+                            const processedText = postprocessText(text);
+
                             // Mostrar el texto en el campo de entrada
-                            document.getElementById('textInput').value = text;
+                            document.getElementById('textInput').value = processedText;
 
                             // Enfocar el campo de entrada para que el usuario pueda editar el texto
                             document.getElementById('textInput').focus();
@@ -712,4 +679,48 @@ function openCamera(constraints) {
             text: 'Tu navegador no soporta la funcionalidad de cámara.',
         });
     }
+}
+
+// Función para preprocesar la imagen (escala de grises y umbralización)
+function preprocessImage(canvas) {
+    const context = canvas.getContext('2d');
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // Convertir a escala de grises
+    for (let i = 0; i < data.length; i += 4) {
+        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i] = avg; // rojo
+        data[i + 1] = avg; // verde
+        data[i + 2] = avg; // azul
+    }
+
+    // Aplicar umbralización
+    const threshold = 128;
+    for (let i = 0; i < data.length; i += 4) {
+        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i] = data[i + 1] = data[i + 2] = avg > threshold ? 255 : 0;
+    }
+
+    context.putImageData(imageData, 0, 0);
+}
+
+// Función para postprocesar el texto (corregir espacios y palabras comunes)
+function postprocessText(text) {
+    // Eliminar espacios adicionales
+    text = text.replace(/\s+/g, ' ').trim();
+
+    // Corregir palabras comunes (ejemplo básico)
+    const corrections = {
+        'eh,': 'eh,',
+        'rbajamos': 'trabajamos',
+        'disposttivos': 'dispositivos',
+        // Agrega más correcciones según sea necesario
+    };
+
+    Object.keys(corrections).forEach(key => {
+        text = text.replace(new RegExp(key, 'g'), corrections[key]);
+    });
+
+    return text;
 }
