@@ -538,7 +538,6 @@ document.getElementById('downloadTxt').addEventListener('click', function () {
     showAlert('Éxito!', 'Documento TXT descargado con éxito'); // Usar la nueva función de alerta
 });
 
-
 // Función para cambiar entre modo día y noche
 document.getElementById('toggleModeButton').addEventListener('click', function () {
     document.body.classList.toggle('night-mode');
