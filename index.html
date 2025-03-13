@@ -7,15 +7,14 @@
         default-src 'self' https://w7.pngwing.com; 
         script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-eval';
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
-        img-src 'self' data: https://w7.pngwing.com https://cors-anywhere.herokuapp.com https://images.unsplash.com; 
-        connect-src 'self' data: blob: https://w7.pngwing.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://tessdata.projectnaptha.com https://api.cohere.ai https://api.unsplash.com;
+        img-src 'self' data: https://w7.pngwing.com https://cors-anywhere.herokuapp.com; 
+        connect-src 'self' data: blob: https://w7.pngwing.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://tessdata.projectnaptha.com;
         worker-src 'self' blob:;
     ">
     <title>Humanizador de Texto</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.ico.jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="chatbot/styles.css"> <!-- Enlace al CSS del chatbot -->
     <script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -66,46 +65,11 @@
             <p>&copy; 2025 Humanizador de Texto. Todos los derechos reservados. Donis071-🥷</p>
         </footer>
     </div>
+   <!-- Incluye SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Burbuja flotante del chatbot -->
-    <div id="chatbot-bubble">
-        <img src="img/avatar.jpg" alt="Chatbot" class="bubble-icon">
-        <div id="bubble-message">HOLA SOY TU AGENTE VIRTUAL ESTOY AQUÍ PARA AYUDARTE EN LO QUE NECESITES</div>
-    </div>
-
-    <!-- Interfaz del chatbot (oculta inicialmente) -->
-    <div class="chat-container" id="chat-container">
-        <!-- Encabezado del chat -->
-        <div class="chat-header">
-            <div class="contact-info">
-                <img src="img/avatar.jpg" alt="Foto de perfil" class="profile-pic">
-                <div class="contact-details">
-                    <span class="contact-name">Donis071-🥷</span>
-                    <span class="contact-status">En línea</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Área de mensajes -->
-        <div id="chat-box"></div>
-
-        <!-- Contenedor de entrada -->
-        <div class="input-container">
-            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
-            <button id="send-btn">Enviar</button>
-        </div>
-    </div>
-
-    <!-- Incluye SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Incluye Tesseract.js -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
-
-    <!-- Script principal del proyecto -->
+<!-- Incluye Tesseract.js -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
-
-    <!-- Script del chatbot -->
-    <script src="chatbot/script.js"></script>
 </body>
 </html>
