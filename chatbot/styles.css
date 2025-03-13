@@ -215,6 +215,61 @@ body {
   background-color: #054d42;
 }
 
+/* Estilos para el campo de entrada */
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin-right: 10px;
+  outline: none;
+  font-size: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+}
+
+#user-input:focus {
+  border-color: #075e54; /* Cambia el color del borde al enfocar */
+}
+
+/* Asegúrate de que el contenedor del chat no cause desplazamientos */
+.chat-container {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+/* Ajusta el área de mensajes para evitar superposiciones */
+#chat-box {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: rgba(103, 236, 251, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Asegúrate de que el contenedor de entrada no cause problemas */
+.input-container {
+  display: flex;
+  padding: 10px;
+  background-color: rgba(64, 237, 177, 0.9);
+  border-top: 1px solid #ddd;
+  align-items: center;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .chat-container {

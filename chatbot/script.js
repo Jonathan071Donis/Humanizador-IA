@@ -227,6 +227,7 @@ userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
+
 // Mostrar mensaje en la burbuja al cargar la pagina
 window.addEventListener('load', () => {
   bubbleMessage.style.display = 'block';
