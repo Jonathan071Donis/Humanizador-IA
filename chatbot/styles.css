@@ -193,6 +193,19 @@ body {
     border-radius: 20px;
     margin-right: 10px;
     outline: none;
+    background-color: #262626; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  #user-input:focus {
+    border-color: #00cc77; /* Color del borde al enfocar */
+    outline: none;
+  }
+  
+  #user-input::placeholder {
+    color: #888888; /* Color del placeholder */
   }
   
   /* Botón de enviar */
