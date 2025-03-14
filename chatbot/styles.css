@@ -210,8 +210,8 @@ body {
 @media (max-width: 600px) {
     .chat-container {
         width: 90%; /* Ajusta el ancho en dispositivos móviles */
-        height: 70vh; /* Ajusta la altura en dispositivos móviles */
-        bottom: 80px; /* Ajusta la posición en dispositivos móviles */
+        height: 60vh; /* Ajusta la altura en dispositivos móviles */
+        bottom: 20px; /* Ajusta la posición en dispositivos móviles */
         right: 5%; /* Centra el chatbot en dispositivos móviles */
     }
 
