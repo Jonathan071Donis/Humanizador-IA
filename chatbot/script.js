@@ -237,3 +237,26 @@ window.addEventListener('load', () => {
     bubbleMessage.style.display = 'none';
   }, 5000); // Oculta el mensaje despues de 5 segundos
 });
+
+// Ajustar la altura del contenedor del chat cuando el teclado se abre
+window.addEventListener('resize', () => {
+    if (window.innerHeight < 500) { // Si la altura de la ventana es pequeña (teclado abierto)
+        chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
+    } else {
+        chatContainer.style.height = '500px'; // Restaura la altura original
+    }
+});
+
+// Enfocar el input y ajustar la interfaz cuando el teclado se abre
+userInput.addEventListener('focus', () => {
+    if (window.innerHeight < 500) { // Si la altura de la ventana es pequeña (teclado abierto)
+        chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
+        chatContainer.style.bottom = '20px'; // Ajusta la posición del contenedor
+    }
+});
+
+// Restaurar la altura cuando el teclado se cierra
+userInput.addEventListener('blur', () => {
+    chatContainer.style.height = '500px'; // Restaura la altura original
+    chatContainer.style.bottom = '90px'; // Restaura la posición original
+});

@@ -20,6 +20,7 @@ body {
     border-radius: 50%;
     cursor: pointer;
     display: flex;
+    flex-direction: column; /* Alineación vertical */
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -32,22 +33,57 @@ body {
     border-radius: 50%;
 }
 
-/* Contenedor del chat */
+/* Mensaje en la burbuja (globo de diálogo) */
+#bubble-message {
+    position: absolute;
+    bottom: 70px; /* Espaciado arriba de la burbuja */
+    background-color: #ffffff;
+    color: #000;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    white-space: normal; /* Permite el salto de línea */
+    display: block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease-in-out;
+    max-width: 220px;
+    text-align: left;
+    z-index: 1001;
+    word-wrap: break-word;
+}
+
+/* Triángulo del globo de diálogo */
+#bubble-message::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 20px; /* Ajuste de la posición */
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #ffffff transparent transparent;
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Contenedor del chat (oculto inicialmente) */
 .chat-container {
     position: fixed;
     bottom: 90px;
     right: 20px;
     width: 350px;
     height: 500px;
-    min-height: 400px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente */
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    display: none;
+    display: none; /* Oculto por defecto */
     flex-direction: column;
     overflow: hidden;
     z-index: 1000;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
 }
 
 /* Encabezado del chat */
@@ -58,6 +94,33 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #054d42;
+}
+
+.contact-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-name {
+    font-weight: bold;
+}
+
+.contact-status {
+    font-size: 12px;
+    color: #ccc;
 }
 
 /* Área de mensajes */
@@ -65,7 +128,7 @@ body {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    background-color: rgba(103, 236, 251, 0.9);
+    background-color: rgba(103, 236, 251, 0.9); /* Fondo semi-transparente */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -90,11 +153,33 @@ body {
     align-self: flex-start;
 }
 
+/* Estilo para la hora del mensaje */
+.message-time {
+    font-size: 10px;
+    color: #666;
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* Estilo para las barritas de mensaje leído */
+.message-read {
+    font-size: 12px;
+    color: #4fc3f7;
+    margin-left: 5px;
+}
+
+/* Imágenes en el chat */
+.message img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
 /* Contenedor de entrada */
 .input-container {
     display: flex;
     padding: 10px;
-    background-color: rgba(64, 237, 177, 0.9);
+    background-color: rgba(64, 237, 177, 0.9); /* Fondo semi-transparente */
     border-top: 1px solid #ddd;
 }
 
@@ -106,7 +191,6 @@ body {
     border-radius: 20px;
     margin-right: 10px;
     outline: none;
-    touch-action: manipulation; /* Evita zoom al tocar */
 }
 
 /* Botón de enviar */
@@ -123,33 +207,28 @@ body {
     background-color: #054d42;
 }
 
-/* Ajustes para evitar el problema en móviles */
+/* Responsive Design */
 @media (max-width: 600px) {
     .chat-container {
-        width: 90%;
-        height: 80dvh; /* Usa dynamic viewport height */
-        min-height: 400px;
-        bottom: 20px;
-        right: 5%;
+        width: 90%; /* Ajusta el ancho en dispositivos móviles */
+        height: 60vh; /* Ajusta la altura en dispositivos móviles */
+        bottom: 20px; /* Ajusta la posición en dispositivos móviles */
+        right: 5%; /* Centra el chatbot en dispositivos móviles */
     }
 
     #chat-box {
-        padding: 10px;
-        overflow: auto;
+        padding: 10px; /* Reduce el padding en dispositivos móviles */
     }
 
     .input-container {
-        padding: 5px;
-        position: sticky;
-        bottom: 0;
-        background: rgba(64, 237, 177, 0.9);
+        padding: 5px; /* Reduce el padding en dispositivos móviles */
     }
 
     #user-input {
-        padding: 8px;
+        padding: 8px; /* Reduce el padding en dispositivos móviles */
     }
 
     #send-btn {
-        padding: 8px 15px;
+        padding: 8px 15px; /* Reduce el padding en dispositivos móviles */
     }
 }
