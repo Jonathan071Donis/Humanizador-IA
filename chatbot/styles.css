@@ -3,13 +3,69 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #33bbdc, #36e4d9); /* Fondo degradado */
-    background-size: cover;
-    background-attachment: fixed;
-    overflow: auto; /* Habilitar el scroll */
+    background: linear-gradient(-45deg, #0d0d0d, #1a1a1a, #0d7377, #14ffec); /* Degradado futurista */
+    background-size: 400% 400%;
+    animation: fondoAnimado 10s ease infinite;
+    overflow: auto;
     width: 100%;
-    min-height: 100vh; /* Asegurar que el body ocupe al menos el alto de la ventana */
-  }
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animación del fondo */
+@keyframes fondoAnimado {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Efecto de partículas */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Patrón de partículas */
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Sombras y efecto de vidrio */
+.chat-container {
+    background: rgba(20, 20, 20, 0.8); /* Fondo con transparencia */
+    border-radius: 15px;
+    backdrop-filter: blur(10px); /* Efecto de vidrio */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Ajustes para el input */
+#user-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid #14ffec;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+/* Estilo del botón */
+#send-btn {
+    background: linear-gradient(135deg, #14ffec, #0d7377);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#send-btn:hover {
+    background: linear-gradient(135deg, #0d7377, #14ffec);
+    transform: scale(1.1);
+}
+
   
   /* Burbuja del chatbot */
   #chatbot-bubble {
