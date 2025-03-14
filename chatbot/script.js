@@ -221,42 +221,26 @@ userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
-// Ajustar la altura del contenedor del chat cuando el teclado se abre
-window.addEventListener('resize', () => {
-  if (window.innerHeight < 500) {
-    chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
-  } else {
-    chatContainer.style.height = '500px'; // Restaura la altura original
-  }
-});
-
-// Mostrar mensaje en la burbuja al cargar la pagina
-window.addEventListener('load', () => {
-  bubbleMessage.style.display = 'block';
-  setTimeout(() => {
-    bubbleMessage.style.display = 'none';
-  }, 5000); // Oculta el mensaje despues de 5 segundos
-});
 
 // Ajustar la altura del contenedor del chat cuando el teclado se abre
 window.addEventListener('resize', () => {
-    if (window.innerHeight < 500) { // Si la altura de la ventana es pequeña (teclado abierto)
-        chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
+    const chatContainer = document.querySelector('.chat-container'); // Asegúrate de seleccionar el contenedor del chat
+    if (!chatContainer) return; // Si no existe el contenedor, salimos de la función
+  
+    if (window.innerHeight < 500) {
+      chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
     } else {
-        chatContainer.style.height = '500px'; // Restaura la altura original
+      chatContainer.style.height = '500px'; // Restaura la altura original
     }
-});
-
-// Enfocar el input y ajustar la interfaz cuando el teclado se abre
-userInput.addEventListener('focus', () => {
-    if (window.innerHeight < 500) { // Si la altura de la ventana es pequeña (teclado abierto)
-        chatContainer.style.height = `${window.innerHeight - 100}px`; // Ajusta la altura del contenedor
-        chatContainer.style.bottom = '20px'; // Ajusta la posición del contenedor
-    }
-});
-
-// Restaurar la altura cuando el teclado se cierra
-userInput.addEventListener('blur', () => {
-    chatContainer.style.height = '500px'; // Restaura la altura original
-    chatContainer.style.bottom = '90px'; // Restaura la posición original
-});
+  });
+  
+  // Mostrar mensaje en la burbuja al cargar la página
+  window.addEventListener('load', () => {
+    const bubbleMessage = document.getElementById('bubble-message'); // Selecciona el mensaje de la burbuja
+    if (!bubbleMessage) return; // Si no existe el mensaje, salimos de la función
+  
+    bubbleMessage.style.display = 'block'; // Muestra el mensaje
+    setTimeout(() => {
+      bubbleMessage.style.display = 'none'; // Oculta el mensaje después de 5 segundos
+    }, 5000);
+  });

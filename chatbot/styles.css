@@ -6,11 +6,13 @@ body {
     background: linear-gradient(135deg, #33bbdc, #36e4d9); /* Fondo degradado */
     background-size: cover;
     background-attachment: fixed;
-    overflow: hidden; /* Evita el desplazamiento no deseado */
-}
-
-/* Burbuja del chatbot */
-#chatbot-bubble {
+    overflow: auto; /* Habilitar el scroll */
+    width: 100%;
+    min-height: 100vh; /* Asegurar que el body ocupe al menos el alto de la ventana */
+  }
+  
+  /* Burbuja del chatbot */
+  #chatbot-bubble {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -25,16 +27,16 @@ body {
     justify-content: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-}
-
-#chatbot-bubble img {
+  }
+  
+  #chatbot-bubble img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-}
-
-/* Mensaje en la burbuja (globo de diálogo) */
-#bubble-message {
+  }
+  
+  /* Mensaje en la burbuja (globo de diálogo) */
+  #bubble-message {
     position: absolute;
     bottom: 70px; /* Espaciado arriba de la burbuja */
     background-color: #ffffff;
@@ -50,10 +52,10 @@ body {
     text-align: left;
     z-index: 1001;
     word-wrap: break-word;
-}
-
-/* Triángulo del globo de diálogo */
-#bubble-message::after {
+  }
+  
+  /* Triángulo del globo de diálogo */
+  #bubble-message::after {
     content: '';
     position: absolute;
     bottom: -10px;
@@ -61,16 +63,16 @@ body {
     border-width: 10px 10px 0;
     border-style: solid;
     border-color: #ffffff transparent transparent;
-}
-
-/* Animación de aparición */
-@keyframes fadeIn {
+  }
+  
+  /* Animación de aparición */
+  @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-/* Contenedor del chat (oculto inicialmente) */
-.chat-container {
+  }
+  
+  /* Contenedor del chat (oculto inicialmente) */
+  .chat-container {
     position: fixed;
     bottom: 90px;
     right: 20px;
@@ -84,10 +86,10 @@ body {
     overflow: hidden;
     z-index: 1000;
     backdrop-filter: blur(10px); /* Efecto de desenfoque */
-}
-
-/* Encabezado del chat */
-.chat-header {
+  }
+  
+  /* Encabezado del chat */
+  .chat-header {
     background-color: #075e54;
     color: #fff;
     padding: 10px;
@@ -95,36 +97,36 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #054d42;
-}
-
-.contact-info {
+  }
+  
+  .contact-info {
     display: flex;
     align-items: center;
-}
-
-.profile-pic {
+  }
+  
+  .profile-pic {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
-}
-
-.contact-details {
+  }
+  
+  .contact-details {
     display: flex;
     flex-direction: column;
-}
-
-.contact-name {
+  }
+  
+  .contact-name {
     font-weight: bold;
-}
-
-.contact-status {
+  }
+  
+  .contact-status {
     font-size: 12px;
     color: #ccc;
-}
-
-/* Área de mensajes */
-#chat-box {
+  }
+  
+  /* Área de mensajes */
+  #chat-box {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
@@ -132,103 +134,107 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-/* Burbujas de mensajes */
-.message {
+  }
+  
+  /* Burbujas de mensajes */
+  .message {
     max-width: 70%;
     padding: 10px 15px;
     border-radius: 10px;
     position: relative;
     word-wrap: break-word;
-}
-
-.message.user {
+  }
+  
+  .message.user {
     background-color: #dcf8c6;
     align-self: flex-end;
-}
-
-.message.bot {
+  }
+  
+  .message.bot {
     background-color: #fff;
     align-self: flex-start;
-}
-
-/* Estilo para la hora del mensaje */
-.message-time {
+  }
+  
+  /* Estilo para la hora del mensaje */
+  .message-time {
     font-size: 10px;
     color: #666;
     margin-top: 5px;
     text-align: right;
-}
-
-/* Estilo para las barritas de mensaje leído */
-.message-read {
+  }
+  
+  /* Estilo para las barritas de mensaje leído */
+  .message-read {
     font-size: 12px;
     color: #4fc3f7;
     margin-left: 5px;
-}
-
-/* Imágenes en el chat */
-.message img {
+  }
+  
+  /* Imágenes en el chat */
+  .message img {
     max-width: 100%;
     border-radius: 10px;
     margin-top: 10px;
-}
-
-/* Contenedor de entrada */
-.input-container {
+  }
+  
+  /* Contenedor de entrada */
+  .input-container {
     display: flex;
     padding: 10px;
     background-color: rgba(64, 237, 177, 0.9); /* Fondo semi-transparente */
     border-top: 1px solid #ddd;
-}
-
-/* Campo de entrada */
-#user-input {
+  }
+  
+  /* Campo de entrada */
+  #user-input {
     flex: 1;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 20px;
     margin-right: 10px;
     outline: none;
-}
-
-/* Botón de enviar */
-#send-btn {
+  }
+  
+  /* Botón de enviar */
+  #send-btn {
     padding: 10px 20px;
     background-color: #075e54;
     color: #fff;
     border: none;
     border-radius: 20px;
     cursor: pointer;
-}
-
-#send-btn:hover {
+  }
+  
+  #send-btn:hover {
     background-color: #054d42;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
     .chat-container {
-        width: 90%; /* Ajusta el ancho en dispositivos móviles */
-        height: 60vh; /* Ajusta la altura en dispositivos móviles */
-        bottom: 20px; /* Ajusta la posición en dispositivos móviles */
-        right: 5%; /* Centra el chatbot en dispositivos móviles */
+      width: 90%; /* Ajusta el ancho en dispositivos móviles */
+      height: 50vh; /* Ajusta la altura en dispositivos móviles */
+      bottom: 10px; /* Ajusta la posición en dispositivos móviles */
+      right: 5%; /* Centra el chatbot en dispositivos móviles */
     }
-
+  
     #chat-box {
-        padding: 10px; /* Reduce el padding en dispositivos móviles */
+      padding: 10px; /* Reduce el padding en dispositivos móviles */
     }
-
+  
+    .message {
+      max-width: 80%; /* Ajusta el ancho de los mensajes en dispositivos móviles */
+    }
+  
     .input-container {
-        padding: 5px; /* Reduce el padding en dispositivos móviles */
+      padding: 5px; /* Reduce el padding en dispositivos móviles */
     }
-
+  
     #user-input {
-        padding: 8px; /* Reduce el padding en dispositivos móviles */
+      padding: 8px; /* Reduce el padding en dispositivos móviles */
     }
-
+  
     #send-btn {
-        padding: 8px 15px; /* Reduce el padding en dispositivos móviles */
+      padding: 8px 15px; /* Reduce el padding en dispositivos móviles */
     }
-}
+  }
